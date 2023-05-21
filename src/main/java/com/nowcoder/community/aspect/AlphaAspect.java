@@ -11,6 +11,7 @@ public class AlphaAspect {
     @Pointcut("execution(* com.nowcoder.community.service.*.*(..))")
     public void pointcut() {
 
+
     }
 
     @Before("pointcut()")

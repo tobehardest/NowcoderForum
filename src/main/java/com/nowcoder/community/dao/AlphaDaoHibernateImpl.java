@@ -9,3 +9,4 @@ public class AlphaDaoHibernateImpl implements AlphaDao {
         return "Hibernate";
     }
 }
+  

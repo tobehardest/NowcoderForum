@@ -25,4 +25,5 @@ public class LoggerTests {
         logger.error("error log");
     }
 
+
 }

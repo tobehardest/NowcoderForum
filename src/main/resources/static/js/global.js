@@ -1,4 +1,4 @@
-var CONTEXT_PATH = "/community";
+var CONTEXT_PATH = "";
 
 window.alert = function(message) {
 	if(!$(".alert-box").length) {
@@ -23,6 +23,8 @@ window.alert = function(message) {
 			'</div>'
 		);
 	}
+
+
 
     var h = $(".alert-box").height();
 	var y = h / 2 - 100;

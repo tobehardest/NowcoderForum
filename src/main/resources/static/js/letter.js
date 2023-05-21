@@ -19,6 +19,7 @@ function send_letter() {
 	            $("#hintBody").text(data.msg);
 	        }
 
+
 	        $("#hintModal").modal("show");
             setTimeout(function(){
                 $("#hintModal").modal("hide");

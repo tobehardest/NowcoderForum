@@ -1,13 +1,14 @@
 package com.nowcoder.community.controller;
 
-import com.nowcoder.community.annotation.LoginRequired;
+import com.nowcoder.community.entity.Event;
 import com.nowcoder.community.entity.Page;
 import com.nowcoder.community.entity.User;
+import com.nowcoder.community.event.EventProducer;
 import com.nowcoder.community.service.FollowService;
 import com.nowcoder.community.service.UserService;
-import com.nowcoder.community.utils.CommunityConstant;
-import com.nowcoder.community.utils.CommunityUtil;
-import com.nowcoder.community.utils.HostHolder;
+import com.nowcoder.community.util.CommunityConstant;
+import com.nowcoder.community.util.CommunityUtil;
+import com.nowcoder.community.util.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,9 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 粉丝关注相关
- */
 @Controller
 public class FollowController implements CommunityConstant {
 
@@ -34,33 +32,38 @@ public class FollowController implements CommunityConstant {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(path = "/follow",method = RequestMethod.POST)
+    @Autowired
+    private EventProducer eventProducer;
+
+    @RequestMapping(path = "/follow", method = RequestMethod.POST)
     @ResponseBody
-    @LoginRequired
-    public String follow(int entityType, int entityId){
+    public String follow(int entityType, int entityId) {
         User user = hostHolder.getUser();
 
         followService.follow(user.getId(), entityType, entityId);
-        return CommunityUtil.getJsonString(0,"已关注");
+
+        // 触发关注事件
+        Event event = new Event()
+                .setTopic(TOPIC_FOLLOW)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityType(entityType)
+                .setEntityId(entityId)
+                .setEntityUserId(entityId);
+        eventProducer.fireEvent(event);
+
+        return CommunityUtil.getJSONString(0, "已关注!");
     }
 
-    @RequestMapping(path = "/unfollow",method = RequestMethod.POST)
+    @RequestMapping(path = "/unfollow", method = RequestMethod.POST)
     @ResponseBody
-    @LoginRequired
-    public String unfollow(int entityType, int entityId){
+    public String unfollow(int entityType, int entityId) {
         User user = hostHolder.getUser();
 
         followService.unfollow(user.getId(), entityType, entityId);
-        return CommunityUtil.getJsonString(0,"已取消关注");
+
+        return CommunityUtil.getJSONString(0, "已取消关注!");
     }
 
-    /**
-     * 获取关注的人列表
-     * @param userId
-     * @param page
-     * @param model
-     * @return
-     */
     @RequestMapping(path = "/followees/{userId}", method = RequestMethod.GET)
     public String getFollowees(@PathVariable("userId") int userId, Page page, Model model) {
         User user = userService.findUserById(userId);
@@ -85,13 +88,6 @@ public class FollowController implements CommunityConstant {
         return "/site/followee";
     }
 
-    /**
-     * 获取粉丝列表
-     * @param userId
-     * @param page
-     * @param model
-     * @return
-     */
     @RequestMapping(path = "/followers/{userId}", method = RequestMethod.GET)
     public String getFollowers(@PathVariable("userId") int userId, Page page, Model model) {
         User user = userService.findUserById(userId);

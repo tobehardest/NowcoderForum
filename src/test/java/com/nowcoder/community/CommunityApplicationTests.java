@@ -28,6 +28,8 @@ public class CommunityApplicationTests implements ApplicationContextAware {
 		this.applicationContext = applicationContext;
 	}
 
+
+
 	@Test
 	public void testApplicationContext() {
 		System.out.println(applicationContext);

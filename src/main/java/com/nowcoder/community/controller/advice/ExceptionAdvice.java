@@ -1,6 +1,6 @@
 package com.nowcoder.community.controller.advice;
 
-import com.nowcoder.community.utils.CommunityUtil;
+import com.nowcoder.community.util.CommunityUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 @ControllerAdvice(annotations = Controller.class)
 public class ExceptionAdvice {
 
+
     private static final Logger logger = LoggerFactory.getLogger(ExceptionAdvice.class);
 
     @ExceptionHandler({Exception.class})
@@ -24,11 +25,11 @@ public class ExceptionAdvice {
             logger.error(element.toString());
         }
 
-        String xRequestedWith = request.getHeader("x-requested-with");  //获取请求方式，同步/异步
-        if ("XMLHttpRequest".equals(xRequestedWith)) { //异步
+        String xRequestedWith = request.getHeader("x-requested-with");
+        if ("XMLHttpRequest".equals(xRequestedWith)) {
             response.setContentType("application/plain;charset=utf-8");
             PrintWriter writer = response.getWriter();
-            writer.write(CommunityUtil.getJsonString(1, "服务器异常!"));
+            writer.write(CommunityUtil.getJSONString(1, "服务器异常!"));
         } else {
             response.sendRedirect(request.getContextPath() + "/error");
         }
